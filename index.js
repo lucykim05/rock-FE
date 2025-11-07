@@ -13,7 +13,6 @@ const client = new Client({
   ],
 });
 
-// When the client is ready, run this code (only once).
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
