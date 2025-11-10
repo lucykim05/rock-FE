@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 import pool from '../db/database.js';
-import { attendanceQueries } from '../db/queries/attendance.js';
+import { ATTENDANCE_QUERIES } from '../db/queries/attendance.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -13,17 +13,12 @@ export default {
 
     try {
       // 사용자 등록
-      await pool.query(attendanceQueries.registerUser, [userId, username]);
+      await pool.query(ATTENDANCE_QUERIES.REGISTER_USER, [userId, username]);
+
+      const { todayKST, isMorning } = this.getKoreanTime();
 
       // 출석 체크
-      const now = new Date();
-      const koreaTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-      const todayKST = koreaTime.toISOString().split('T')[0];
-
-      // 9시 이전 출석시 아침 출석으로 인정
-      const isMorning = koreaTime.getHours() >= 6 || koreaTime.getHours() < 9;
-
-      const result = await pool.query(attendanceQueries.registerAttendance, [
+      const result = await pool.query(ATTENDANCE_QUERIES.REGISTER_ATTENDANCE, [
         userId,
         todayKST,
         isMorning,
@@ -32,13 +27,8 @@ export default {
       // 통계 업데이트
       if (result.rows.length > 0) {
         // 새 기록인 경우
-        await pool.query(attendanceQueries.updateStats, [userId]);
-
-        // 연속 출석일 수 조회
-        const stats = await pool.query(attendanceQueries.getStreakDays, [
-          userId,
-        ]);
-        const streakCount = stats.rows[0]?.streak_days || 1;
+        await pool.query(ATTENDANCE_QUERIES.UPDATE_STATS, [userId]);
+        const streakCount = await this.updateStreak(userId);
 
         const morning = isMorning ? '아침 출석에 성공했습니다요!🎉' : '';
 
@@ -53,5 +43,33 @@ export default {
       console.error('출석 오류', error);
       await interaction.reply('이런, 뭔가 꼬였는갑네… 출석이 안 됐습니다요!');
     }
+  },
+
+  getKoreanTime() {
+    const now = new Date();
+
+    // 한국 시간으로 변환
+    const koreaTime = new Date(
+      now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' })
+    );
+
+    // YYYY-MM-DD 형식으로 변환
+    const year = koreaTime.getFullYear();
+    const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreaTime.getDate()).padStart(2, '0');
+    const todayKST = `${year}-${month}-${day}`;
+
+    // 아침 출석
+    const hour = koreaTime.getHours();
+    const isMorning = hour >= 6 && hour < 9;
+
+    return { todayKST, isMorning };
+  },
+
+  async updateStreak(userId) {
+    await pool.query(ATTENDANCE_QUERIES.UPDATE_STATS, [userId]);
+
+    const stats = await pool.query(ATTENDANCE_QUERIES.GET_STREAKDAYS, [userId]);
+    return stats.rows[0]?.streak_days || 1;
   },
 };
