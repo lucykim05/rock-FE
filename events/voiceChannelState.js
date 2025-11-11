@@ -1,6 +1,6 @@
 import { Events } from "discord.js";
 import { CHANNEL_ENTER_MSG, CHANNEL_EXIT_MSG } from "../constants/messages.js";
-import { User } from "../classes/User.js";
+import { User } from "./UserClass/User.js";
 
 const studyChannelId = process.env.STUDY_TRACK_VOICE_CHANNEL_ID;
 const userInfo = {
