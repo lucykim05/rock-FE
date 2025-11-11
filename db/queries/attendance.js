@@ -20,23 +20,29 @@ export const ATTENDANCE_QUERIES = {
       WHERE user_id = $1 
       AND attendance_date = CURRENT_DATE - INTERVAL '1 day'
     ) AS attended_yesterday
+  ),
+  new_streak AS (
+    SELECT 
+      CASE 
+        WHEN (SELECT attended_yesterday FROM yesterday_attendance) 
+        THEN COALESCE((SELECT streak_days FROM states WHERE user_id = $1), 0) + 1
+        ELSE 1
+      END AS streak_value
   )
-  INSERT INTO states (user_id, total_attendance, streak_days)
-  VALUES ($1, 1, 1)
+  INSERT INTO states (user_id, total_attendance, streak_days, max_streak)
+  VALUES ($1, 1, (SELECT streak_value FROM new_streak), (SELECT streak_value FROM new_streak))
   ON CONFLICT (user_id) DO UPDATE 
   SET 
     total_attendance = states.total_attendance + 1,
-    streak_days = CASE 
-      WHEN (SELECT attended_yesterday FROM yesterday_attendance) THEN states.streak_days + 1
-      ELSE 1
-    END,
+    streak_days = (SELECT streak_value FROM new_streak),
+    max_streak = GREATEST(states.max_streak, (SELECT streak_value FROM new_streak)),
     updated_at = NOW()
 `,
 
-  getStreakDays: `SELECT streak_days FROM states WHERE user_id=$1`,
+  GET_STREAKDAYS: `SELECT streak_days FROM states WHERE user_id=$1`,
 
   // 이번달 통계
-  attendanceState: `SELECT user_id, total_attendance, streak_days, max_streak
+  ATTENDANCE_STATS: `SELECT user_id, total_attendance, streak_days, max_streak
   FROM states
   WHERE user_id = $1`,
 };
