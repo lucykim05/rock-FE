@@ -14,8 +14,8 @@ export const ATTENDANCE_QUERIES = {
 
   // 어제 출석 여부 확인
   CHECK_YESTERDAY: `SELECT EXISTS (
-    SELECT 1 FROM attendance
-    WHERE user_id = $1 AND attendance_date = $2
+    SELECT 1 FROM attendance -- attendance 정보 있는지 확인
+    WHERE user_id = $1 AND attendance_date = $2 -- $2는 어제 날짜
   ) AS attended_yesterday`,
 
   GET_CURRENT_STATS: `SELECT total_attendance, streak_days, max_streak
@@ -24,9 +24,9 @@ export const ATTENDANCE_QUERIES = {
 
   UPDATE_STATS: `INSERT INTO states (user_id, total_attendance, streak_days, max_streak)
   VALUES($1, $2, $3, $4)
-  ON CONFLICT(user_id) DO UPDATE
-  SET
-    total_attendance = $2,
+  ON CONFLICT(user_id) DO UPDATE -- 기존 유저면
+  SET -- 내용 업데이트
+    total_attendance = $2, 
     streak_days = $3,
     max_streak = $4,
     updated_at = NOW()`,
