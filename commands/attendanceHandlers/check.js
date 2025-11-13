@@ -1,4 +1,4 @@
-import { processAttendance } from './attendanceService.js';
+import { processAttendance } from './processAttendance.js';
 import { ATTENDANCE } from '../../constants/messages.js';
 
 export async function checkAttendance(interaction) {
@@ -7,11 +7,13 @@ export async function checkAttendance(interaction) {
 
   try {
     const result = await processAttendance(userId, username);
+    // 출석 등록 및 통계 업데이트
 
     if (result.alreadyChecked) {
       await interaction.reply(ATTENDANCE.ALREADY_CHECKED);
       return;
     }
+    // 중복 출석이면 alreadychecked true로 반환하게 해둠
 
     const morning = result.isMorning ? ATTENDANCE.MORNING_ATTEND : '';
     const message =

@@ -22,7 +22,17 @@ export async function registerAttendance(
   return result.rows.length > 0;
 }
 
-// 1. 어제 출석했는지 확인
+// 메인 함수
+export async function updateAttendanceStats(userId, yesterday) {
+  const attendedYesterday = await checkYesterdayAttendance(userId, yesterday);
+  const currentStats = await getCurrentStats(userId);
+  const newStats = calculateNewStats(currentStats, attendedYesterday);
+  await saveStats(userId, newStats);
+
+  return newStats.streak;
+}
+
+// 어제 출석했는지 확인
 async function checkYesterdayAttendance(userId, yesterday) {
   const yesterdayAttendance = await pool.query(
     ATTENDANCE_QUERIES.CHECK_YESTERDAY,
@@ -40,7 +50,7 @@ async function checkYesterdayAttendance(userId, yesterday) {
   return attendedYesterday;
 }
 
-// 2. 현재 통계 가져오기
+// 현재 통계 가져오기
 async function getCurrentStats(userId) {
   const currentStats = await pool.query(ATTENDANCE_QUERIES.GET_CURRENT_STATS, [
     userId,
@@ -55,7 +65,7 @@ async function getCurrentStats(userId) {
   return stats;
 }
 
-// 3. 통계 계산
+// 통계 계산
 function calculateNewStats(stats, attendedYesterday) {
   const updateTotal = stats.total_attendance + 1;
   let updateStreak = 1;
@@ -73,7 +83,7 @@ function calculateNewStats(stats, attendedYesterday) {
   };
 }
 
-// 4. 통계 업데이트
+// 통계 업데이트
 async function saveStats(userId, newStats) {
   await pool.query(ATTENDANCE_QUERIES.UPDATE_STATS, [
     userId,
@@ -81,16 +91,6 @@ async function saveStats(userId, newStats) {
     newStats.streak,
     newStats.maxStreak,
   ]);
-}
-
-// 메인 함수
-export async function updateAttendanceStats(userId, yesterday) {
-  const attendedYesterday = await checkYesterdayAttendance(userId, yesterday);
-  const currentStats = await getCurrentStats(userId);
-  const newStats = calculateNewStats(currentStats, attendedYesterday);
-  await saveStats(userId, newStats);
-
-  return newStats.streak;
 }
 
 // 출석 통계 조회

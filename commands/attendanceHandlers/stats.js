@@ -1,14 +1,14 @@
-// commands/attendanceHandlers/stats.js
 import { ATTENDANCE } from '../../constants/messages.js';
 import { getStats } from './attendanceData.js';
 
 export async function getAttendanceStats(interaction) {
   try {
+    // 통계 가져오기
     const stats = await getStats(interaction.user.id);
 
     if (!stats) {
       return interaction.reply(ATTENDANCE.NO_RECORD);
-    }
+    } // 통계 없으면 기록 없다 출력
 
     const message =
       `## 출석 통계\n` +

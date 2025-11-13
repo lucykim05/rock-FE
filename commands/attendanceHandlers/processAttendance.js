@@ -31,15 +31,14 @@ export async function processAttendance(userId, username) {
   );
 
   if (!isNewAttendance) {
-    return { success: false, alreadyChecked: true };
-  }
+    return { alreadyChecked: true };
+  } // 중복 출석이면 alreadyChecked를 true로 return -> 내부 확인 후에 출력하도록
 
   // 통계 업데이트
   const streakDays = await updateAttendanceStats(userId, yesterday);
 
   return {
-    success: true,
     streakDays,
     isMorning,
-  };
+  }; // 연속 출석일 수, 아침 출석 여부
 }
