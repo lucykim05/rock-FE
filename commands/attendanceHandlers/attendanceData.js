@@ -1,11 +1,6 @@
 import pool from '../../db/database.js';
 import { ATTENDANCE_QUERIES } from '../../db/queries/attendance.js';
 
-// 유저 등록
-export async function registerUser(userId, username) {
-  await pool.query(ATTENDANCE_QUERIES.REGISTER_USER, [userId, username]);
-}
-
 // 출석 등록
 export async function registerAttendance(
   userId,

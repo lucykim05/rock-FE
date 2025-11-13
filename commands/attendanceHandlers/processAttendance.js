@@ -1,8 +1,4 @@
-import {
-  registerUser,
-  registerAttendance,
-  updateAttendanceStats,
-} from './attendanceData.js';
+import { registerAttendance, updateAttendanceStats } from './attendanceData.js';
 import {
   getKoreanTime,
   formatKSTDate,
@@ -10,10 +6,12 @@ import {
   getYesterdayKST,
   isMorningTime,
 } from '../../utils/time.js';
+import { ATTENDANCE_QUERIES } from '../../db/queries/attendance.js';
+import pool from '../../db/database.js';
 
 export async function processAttendance(userId, username) {
   // 유저 등록
-  await registerUser(userId, username);
+  await pool.query(ATTENDANCE_QUERIES.REGISTER_USER, [userId, username]);
 
   // 시간 정보
   const koreanTime = getKoreanTime();
