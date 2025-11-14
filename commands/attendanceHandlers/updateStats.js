@@ -81,5 +81,30 @@ export async function getStats(userId) {
     return null;
   } // 통계 없는지 확인 위해 null return
 
-  return result.rows[0];
+  const stats = result.rows[0];
+  const monthlyRate = await calculateMonthlyAttendance(userId);
+
+  return {
+    ...stats,
+    monthlyRate,
+  };
+}
+
+export async function calculateMonthlyAttendance(userId) {
+  const now = new Date();
+  const currYear = now.getFullYear();
+  const currMonth = now.getMonth() + 1;
+
+  const daysInMonth = new Date(currYear, currMonth, 0).getDate();
+
+  const result = await pool.query(ATTENDANCE_QUERIES.GET_MONTHLY_STATS, [
+    userId,
+    currYear,
+    currMonth,
+  ]);
+
+  const monthlyCount = result.rows[0]?.count || 0;
+  const monthlyRate = Math.round((monthlyCount / daysInMonth) * 100);
+
+  return monthlyRate;
 }

@@ -14,7 +14,8 @@ export async function getAttendanceStats(interaction) {
       `## 출석 현황\n` +
       `총 출석 : ${stats.total_attendance}회 \n` +
       `현재 연속 ${stats.streak_days}회 출석\n` +
-      `최대 연속 ${stats.max_streak}일 출석`;
+      `최대 연속 ${stats.max_streak}일 출석\n` +
+      `이번 달 출석률 : ${stats.monthlyRate}%`;
 
     await interaction.reply(message);
   } catch (error) {

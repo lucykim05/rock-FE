@@ -31,8 +31,15 @@ export const ATTENDANCE_QUERIES = {
     max_streak = $4,
     updated_at = NOW()`,
 
-  // 이번달 통계
+  // 전체 통계
   ATTENDANCE_STATS: `SELECT user_id, total_attendance, streak_days, max_streak
   FROM states
   WHERE user_id = $1`,
+
+  // 이번달 통계
+  GET_MONTHLY_STATS: `SELECT COUNT(*) as count
+  FROM attendance
+  WHERE user_id = $1
+    AND EXTRACT(YEAR FROM attendance_date) = $2
+    AND EXTRACT(MONTH FROM attendance_date) = $3`,
 };
