@@ -1,5 +1,3 @@
-import pool from '../../db/database.js';
-import { ATTENDANCE_QUERIES } from '../../db/queries/attendance.js';
 import {
   checkYesterdayAttendance,
   getCurrentStats,
@@ -39,9 +37,6 @@ function calculateNewStats(stats, attendedYesterday) {
 // 출석 통계 조회
 export async function getStats(userId) {
   const result = await getAttendanceStats(userId);
-  if (!result) {
-    return null;
-  } // 통계 없는지 확인 위해 null return
 
   const monthlyRate = await calculateMonthlyAttendance(userId);
 

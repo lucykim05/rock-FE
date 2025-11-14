@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { checkAttendance } from './attendanceHandlers/check.js';
 import { getAttendanceStats } from './attendanceHandlers/stats.js';
+import { getAttendanceRanking } from './attendanceHandlers/ranking.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -11,6 +12,9 @@ export default {
     )
     .addSubcommand((subcommand) =>
       subcommand.setName('현황').setDescription('출석 현황을 확인합니다')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName('순위').setDescription('출석 순위를 확인합니다.')
     ),
 
   async execute(interaction) {
@@ -20,6 +24,8 @@ export default {
       await checkAttendance(interaction);
     } else if (subcommand === '현황') {
       await getAttendanceStats(interaction);
+    } else if (subcommand === '순위') {
+      await getAttendanceRanking(interaction);
     }
   },
 };

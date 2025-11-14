@@ -45,6 +45,7 @@ export async function saveStats(userId, newStats) {
   return stats;
 }
 
+// 이번달 출석일 수 조회
 export async function getMonthlyCount(userId) {
   const now = new Date();
   const currYear = now.getFullYear();
@@ -59,10 +60,11 @@ export async function getMonthlyCount(userId) {
   return result;
 }
 
+// 출석 통계 가져오기
 export async function getAttendanceStats(userId) {
   const result = await pool.query(ATTENDANCE_QUERIES.ATTENDANCE_STATS, [
     userId,
   ]);
 
-  return result.rows[0] || null;
+  return result.rows[0] || null; // 통계 없는지 확인
 }

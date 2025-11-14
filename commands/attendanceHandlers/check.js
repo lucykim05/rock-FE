@@ -3,7 +3,7 @@ import { ATTENDANCE } from '../../constants/messages.js';
 
 export async function checkAttendance(interaction) {
   const userId = interaction.user.id;
-  const username = interaction.user.username;
+  const username = interaction.member.displayName;
 
   try {
     const result = await processAttendance(userId, username);

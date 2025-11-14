@@ -9,4 +9,5 @@ export const ATTENDANCE = Object.freeze({
   ERROR_ATTEND: '이런, 뭔가 꼬였는갑네… 출석이 안 됐습니다요!',
   ERROR_ATTENDSTATS: '이런, 뭔가 꼬였는갑네… 통계를 못 불러오겠는디요?',
   NO_RECORD: '출석 기록이 없습니다요!',
+  NO_RANKING: '순위 데이터가 없습니다요!',
 });
