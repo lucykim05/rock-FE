@@ -1,8 +1,10 @@
 import { Events } from "discord.js";
-import { User } from "./studyTimeHandlers/User.js";
-import { StudyTimeCountError } from "../error/Errors.js";
+import { User } from "./studyTimeClasses/User.js";
+import {
+  StudyTimeCountError,
+  SendingChannelMessageFailError,
+} from "../error/Errors.js";
 import { CHANNEL } from "../constants/messages.js";
-import { send2VoiceChannel } from "./studyTimeHandlers/Message.js";
 
 const studyChannelId = process.env.STUDY_TRACK_VOICE_CHANNEL_ID;
 
@@ -22,20 +24,17 @@ export default {
       }
     } catch (error) {
       if (error instanceof StudyTimeCountError) {
-        send2VoiceChannel(
+        sendMessage(
           newState,
-          studyChannelId,
           `${newState.member.user.displayName} 마님..\n${error.message} \n다시 한 번 나갔다 들어오셔유...`
         );
         return;
       }
 
-      send2VoiceChannel(
+      sendMessage(
         newState,
-        studyChannelId,
         `${newState.member.user.displayName} 마님.. 문제가 생긴 것 같슈.\n다시 해보셔야 쓰것는디?`
       );
-      return;
     }
   },
 };
@@ -61,12 +60,23 @@ const checkStudy = (client, user) => {
     //입장
     user.startTimer();
     const msg = user.makeMessage(CHANNEL.ENTER_MSG);
-    send2VoiceChannel(curState, studyChannelId, msg);
+    sendMessage(curState, msg);
   } else {
     //퇴장
     user.endTimer();
     const msg = user.makeMessage(CHANNEL.EXIT_MSG);
-    send2VoiceChannel(curState, studyChannelId, msg);
+    sendMessage(curState, msg);
   }
   client.studyUsers.set(user.userId, user); //client에 해당 사용자의 상태 업데이트
+};
+
+const sendMessage = (curState, msg) => {
+  try {
+    const channelCollection = curState.guild.channels.cache; //서버에 존재하는 모든 채널을 Collection 형태로 리턴
+    //Collection을 순회하여 동일한 voice Channel id를 가진 객체를 찾은 뒤, 해당 객체.send('메세지') 해야 함
+    const voiceChannel = channelCollection.get(studyChannelId);
+    voiceChannel.send(msg);
+  } catch (error) {
+    throw new SendingChannelMessageFailError(curState, error);
+  }
 };
