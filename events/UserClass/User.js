@@ -1,17 +1,27 @@
-import { StudyTimeCountError, SendingDMFailError } from "../../error/Errors.js";
+import {
+  StudyTimeCountError,
+  SendingDMFailError,
+  SaveStudyTimeToDBFailError,
+} from "../../error/Errors.js";
+import { formatKSTDate } from "../../utils/time.js";
+import { UNIT } from "../../constants/units.js";
+import pool from "../../db/database.js";
+import { STUDY_TIME_QUERIES } from "../../db/queries/studyTime.js";
+import { ERROR_MESSAGES } from "../../constants/errorMessages.js";
 
 export class User {
   #newState;
 
   #userId;
   #userDisplayName;
+  #membersMap;
 
   #isStudying;
   #studyTimeStart;
   #studyTimeEnd;
   #studyTime;
   #totalStudyTime;
-  #yymmdd;
+  #date;
 
   constructor(newState) {
     this.#initializeUser(newState);
@@ -21,19 +31,13 @@ export class User {
     this.#newState = newState;
     this.#userDisplayName = newState.member.user.displayName;
     this.#userId = newState.member.user.id;
+    this.#membersMap = newState.guild.members.cache;
     this.#isStudying = false;
-    this.#yymmdd = this.#getDate();
+    this.#date = formatKSTDate(new Date());
     this.#studyTimeStart = 0;
     this.#studyTimeEnd = 0;
     this.#studyTime = 0;
     this.#totalStudyTime = 0;
-  }
-  #getDate() {
-    const today = new Date();
-    const year = today.getFullYear() % 100;
-    const month = (today.getMonth() + 1).toString().padStart(2, "0");
-    const date = today.getDate();
-    return `${year}${month}${date}`;
   }
 
   updateState(newState) {
@@ -55,50 +59,79 @@ export class User {
   }
 
   startTimer() {
-    this.#studyTimeStart = Date.now();
+    this.#studyTimeStart = Date.now(); //ms -> sec으로 변환해서 저장
     this.#isStudying = true;
   }
 
-  endTimer() {
+  async endTimer() {
     if (this.#isStudying && this.#studyTimeStart > 0) {
-      this.#studyTimeEnd = Date.now();
+      this.#studyTimeEnd = Date.now(); //ms -> sec으로 변환해서 저장
       this.#isStudying = false;
-      this.#saveTime();
+      await this.#saveStudyTime();
       this.#sendDM();
       return;
     }
     throw new StudyTimeCountError();
   }
 
-  #saveTime() {
+  async #saveStudyTime() {
     if (this.#studyTimeStart > 0 && this.#studyTimeEnd > 0) {
       this.#studyTime = this.#calculateStudyTime();
       this.#totalStudyTime += this.#studyTime;
+      await this.#saveToDB();
       return;
     }
     throw new StudyTimeCountError();
   }
 
-  #sendDM() {
+  async #saveToDB() {
     try {
-      const membersMap = this.#newState.guild.members.cache;
-      const member = membersMap.get(this.#userId);
-      member.send(
-        `${this.#userDisplayName} 마님 방금 ${
-          this.#studyTime
-        }초 공부하셨습니다요!\n오늘 총 공부 시간은 ${
-          this.#totalStudyTime
-        }초 여유!!`
-      );
+      const formattedStartTime = new Date(this.#studyTimeStart);
+      const formattedEndTime = new Date(this.#studyTimeEnd);
+      await pool.query(STUDY_TIME_QUERIES.SAVE_STUDY_TIME, [
+        this.#userId,
+        this.#date,
+        formattedStartTime,
+        formattedEndTime,
+        this.#totalStudyTime,
+      ]);
     } catch (error) {
-      new SendingDMFailError(this.#newState, error);
+      throw new SaveStudyTimeToDBFailError(this.#newState, this.#userId, error);
     }
   }
 
+  #sendDM() {
+    try {
+      const formattedStudyTime = this.#formatStudyTime(this.#studyTime);
+      const formattedTotalStudyTime = this.#formatStudyTime(
+        this.#totalStudyTime
+      );
+
+      const member = this.#membersMap.get(this.#userId);
+      member.send(
+        `${
+          this.#userDisplayName
+        } 마님 방금 ${formattedStudyTime} 공부하셨습니다요!\n오늘 총 공부 시간은 ${formattedTotalStudyTime} 여유!!`
+      );
+    } catch (error) {
+      const member = this.#membersMap.get(this.#userId);
+      member.send(`${ERROR_MESSAGES.ERROR_STUDY_TIME_DBSAVE_FAIL}`);
+      throw new SendingDMFailError(this.#newState, error);
+    }
+  }
+
+  //초단위로 측정된 시간을 시분초 단위로 변환
+  #formatStudyTime = (time) => {
+    const hours = Math.floor(time / UNIT.SEC2HOUR);
+    const minutes = Math.floor((time % UNIT.SEC2HOUR) / UNIT.SEC2MINUTE);
+    const seconds = time % UNIT.SEC2MINUTE;
+    return `${hours}시 ${minutes}분 ${seconds}초`;
+  };
+
   #calculateStudyTime() {
-    const studiedSeconds = Math.floor(
+    const studyTimeInSec = Math.floor(
       (this.#studyTimeEnd - this.#studyTimeStart) / 1000
     );
-    return studiedSeconds;
+    return studyTimeInSec;
   }
 }

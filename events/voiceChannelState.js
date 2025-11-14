@@ -1,10 +1,10 @@
-import { Events } from 'discord.js';
-import { User } from './UserClass/User.js';
+import { Events } from "discord.js";
+import { User } from "./UserClass/User.js";
 import {
   StudyTimeCountError,
   SendingChannelMessageFailError,
-} from '../error/Errors.js';
-import { CHANNEL } from '../constants/messages.js';
+} from "../error/Errors.js";
+import { CHANNEL } from "../constants/messages.js";
 
 const studyChannelId = process.env.STUDY_TRACK_VOICE_CHANNEL_ID;
 
@@ -77,6 +77,6 @@ const sendMessage = (curState, msg) => {
     const voiceChannel = channelCollection.get(studyChannelId);
     voiceChannel.send(msg);
   } catch (error) {
-    new SendingChannelMessageFailError(curState, error);
+    throw new SendingChannelMessageFailError(curState, error);
   }
 };
