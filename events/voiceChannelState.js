@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { User } from "./studyTimeClasses/User.js";
+import { User } from "./UserClass/User.js";
 import {
   StudyTimeCountError,
   SendingChannelMessageFailError,
