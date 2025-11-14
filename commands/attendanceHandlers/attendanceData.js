@@ -58,3 +58,11 @@ export async function getMonthlyCount(userId) {
 
   return result;
 }
+
+export async function getAttendanceStats(userId) {
+  const result = await pool.query(ATTENDANCE_QUERIES.ATTENDANCE_STATS, [
+    userId,
+  ]);
+
+  return result.rows[0] || null;
+}

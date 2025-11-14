@@ -5,6 +5,7 @@ import {
   getCurrentStats,
   saveStats,
   getMonthlyCount,
+  getAttendanceStats,
 } from './attendanceData.js';
 
 // 메인 함수
@@ -37,19 +38,15 @@ function calculateNewStats(stats, attendedYesterday) {
 
 // 출석 통계 조회
 export async function getStats(userId) {
-  const result = await pool.query(ATTENDANCE_QUERIES.ATTENDANCE_STATS, [
-    userId,
-  ]);
-
-  if (result.rows.length === 0) {
+  const result = await getAttendanceStats(userId);
+  if (!result) {
     return null;
   } // 통계 없는지 확인 위해 null return
 
-  const stats = result.rows[0];
   const monthlyRate = await calculateMonthlyAttendance(userId);
 
   return {
-    ...stats,
+    ...result,
     monthlyRate,
   };
 }
