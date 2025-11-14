@@ -1,10 +1,10 @@
-import { Events } from 'discord.js';
-import { User } from './UserClass/User.js';
+import { Events } from "discord.js";
+import { User } from "./UserClass/User.js";
 import {
   StudyTimeCountError,
   SendingChannelMessageFailError,
-} from '../error/Errors.js';
-import { CHANNEL } from '../constants/messages.js';
+} from "../error/Errors.js";
+import { CHANNEL } from "../constants/messages.js";
 
 const studyChannelId = process.env.STUDY_TRACK_VOICE_CHANNEL_ID;
 

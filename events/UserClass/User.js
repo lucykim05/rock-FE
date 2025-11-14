@@ -1,8 +1,12 @@
-import { StudyTimeCountError, SendingDMFailError } from "../../error/Errors.js";
+import {
+  StudyTimeCountError,
+  SendingDMFailError,
+  SaveStudyTimeToDBFailError,
+} from "../../error/Errors.js";
+import { formatKSTDate } from "../../utils/time.js";
 import { UNIT } from "../../constants/units.js";
 import pool from "../../db/database.js";
-import { STUDY_TIME_QUERIES } from "../../../db/queries/studyTime.js";
-import { SaveStudyTimeToDBFailError } from "../../../error/Errors.js";
+import { STUDY_TIME_QUERIES } from "../../db/queries/studyTime.js";
 
 export class User {
   #newState;
@@ -26,19 +30,11 @@ export class User {
     this.#userDisplayName = newState.member.user.displayName;
     this.#userId = newState.member.user.id;
     this.#isStudying = false;
-    this.#date = this.#getDate();
+    this.#date = formatKSTDate(new Date());
     this.#studyTimeStart = 0;
     this.#studyTimeEnd = 0;
     this.#studyTime = 0;
     this.#totalStudyTime = 0;
-  }
-
-  #getDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0");
-    const date = today.getDate();
-    return `${year}-${month}-${date}`;
   }
 
   updateState(newState) {
@@ -60,13 +56,13 @@ export class User {
   }
 
   startTimer() {
-    this.#studyTimeStart = Math.floor(Date.now() / UNIT.MS2SEC); //ms -> sec으로 변환해서 저장
+    this.#studyTimeStart = Date.now(); //ms -> sec으로 변환해서 저장
     this.#isStudying = true;
   }
 
   async endTimer() {
     if (this.#isStudying && this.#studyTimeStart > 0) {
-      this.#studyTimeEnd = Math.floor(Date.now() / UNIT.MS2SEC); //ms -> sec으로 변환해서 저장
+      this.#studyTimeEnd = Date.now(); //ms -> sec으로 변환해서 저장
       this.#isStudying = false;
       this.#saveStudyTime();
       await this.#sendDM();
@@ -80,6 +76,7 @@ export class User {
       this.#studyTime = this.#calculateStudyTime();
       this.#totalStudyTime += this.#studyTime;
       await this.#saveToDB();
+      return;
     }
     throw new StudyTimeCountError();
   }
@@ -128,6 +125,9 @@ export class User {
   };
 
   #calculateStudyTime() {
-    return this.#studyTimeEnd - this.#studyTimeStart;
+    const studyTimeInSec = Math.floor(
+      (this.#studyTimeEnd - this.#studyTimeStart) / 1000
+    );
+    return studyTimeInSec;
   }
 }
