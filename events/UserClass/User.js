@@ -7,6 +7,7 @@ import { formatKSTDate } from "../../utils/time.js";
 import { UNIT } from "../../constants/units.js";
 import pool from "../../db/database.js";
 import { STUDY_TIME_QUERIES } from "../../db/queries/studyTime.js";
+import { ERROR_MESSAGES } from "../../constants/errorMessages.js";
 
 export class User {
   #newState;
