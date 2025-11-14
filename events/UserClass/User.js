@@ -1,6 +1,7 @@
 import { StudyTimeCountError, SendingDMFailError } from "../../error/Errors.js";
 import { saveStudyTimeToDB } from "./utils/saveStudyTimeToDB.js";
 import { UNIT } from "../../constants/units.js";
+import { formatStudyTime } from "./utils/formatTime.js";
 
 export class User {
   #newState;
@@ -92,10 +93,9 @@ export class User {
 
   #sendDM() {
     try {
-      const formattedStudyTime = this.#formatStudyTime(this.#studyTime);
-      const formattedTotalStudyTime = this.#formatStudyTime(
-        this.#totalStudyTime
-      );
+      const formattedStudyTime = formatStudyTime(this.#studyTime);
+      const formattedTotalStudyTime = formatStudyTime(this.#totalStudyTime);
+
       const membersMap = this.#newState.guild.members.cache;
       const member = membersMap.get(this.#userId);
       member.send(
@@ -110,13 +110,5 @@ export class User {
 
   #calculateStudyTime() {
     return this.#studyTimeEnd - this.#studyTimeStart;
-  }
-
-  //초단위로 측정된 시간을 시분초 단위로 변환
-  #formatStudyTime(time) {
-    const hours = Math.floor(time / UNIT.SEC2HOUR);
-    const minutes = Math.floor((time % UNIT.SEC2HOUR) / UNIT.SEC2MINUTE);
-    const seconds = time % UNIT.SEC2MINUTE;
-    return `${hours}시 ${minutes}분 ${seconds}초`;
   }
 }
