@@ -2,8 +2,9 @@ import { BotError } from "./BotError.js";
 import { ERROR_MESSAGES } from "../constants/errorMessages.js";
 
 export class StudyTimeCountError extends BotError {
-  constructor() {
+  constructor(userId) {
     super(ERROR_MESSAGES.ERROR_STUDY_TIME_CONUT);
+    console.log(`${userId}${ERROR_MESSAGES.ERROR_STUDY_TIME_CONUT}`);
   }
 }
 
