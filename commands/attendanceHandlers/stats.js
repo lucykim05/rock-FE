@@ -11,14 +11,14 @@ export async function getAttendanceStats(interaction) {
     } // 통계 없으면 기록 없다 출력
 
     const message =
-      `## 출석 통계\n` +
+      `## 출석 현황\n` +
       `총 출석 : ${stats.total_attendance}회 \n` +
       `현재 연속 ${stats.streak_days}회 출석\n` +
       `최대 연속 ${stats.max_streak}일 출석`;
 
-    return interaction.reply(message);
+    await interaction.reply(message);
   } catch (error) {
     console.error('출석통계 오류', error);
-    return interaction.reply(ATTENDANCE.ERROR_ATTENDSTATS);
+    await interaction.reply(ATTENDANCE.ERROR_ATTENDSTATS);
   }
 }
