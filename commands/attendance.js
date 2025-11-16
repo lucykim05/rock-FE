@@ -3,7 +3,7 @@ import { checkAttendance } from './attendanceHandlers/check.js';
 import { getAttendanceStats } from './attendanceHandlers/stats.js';
 import { getAttendanceRanking } from './attendanceHandlers/ranking.js';
 import { isAdmin } from '../utils/authority.js';
-import { setAttendanceChannel } from './attendanceHandlers/setAttendanceChannel.js';
+import { setAttendanceChannel } from './settingHandlers/setAttendanceChannel.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -17,17 +17,6 @@ export default {
     )
     .addSubcommand((subcommand) =>
       subcommand.setName('순위').setDescription('출석 순위를 확인합니다.')
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('출석설정')
-        .setDescription('[관리자 전용] 출석 기능을 자동 세팅합니다.')
-        .addChannelOption((option) =>
-          option
-            .setName('채널')
-            .setDescription('출석 채널로 설정합니다.')
-            .setRequired(true)
-        )
     ),
 
   async execute(interaction) {

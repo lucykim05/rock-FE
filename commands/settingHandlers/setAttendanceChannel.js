@@ -1,7 +1,7 @@
 import pool from '../../db/database.js';
 import { SETTING_QUERY } from '../../db/queries/setting.js';
 
-async function setAttendanceChannel(interaction) {
+export async function setAttendanceChannel(interaction) {
   const channel = interaction.options.getChannel('채널');
   const guildId = interaction.guildId;
 
@@ -23,5 +23,3 @@ async function setAttendanceChannel(interaction) {
     await interaction.reply('설정 중 오류발생');
   }
 }
-
-export { setAttendanceChannel };
