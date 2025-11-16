@@ -1,4 +1,4 @@
-import { scheduleJob, scheduledJobs } from 'node-schedule';
+import { scheduleJob } from 'node-schedule';
 import dotenv from 'dotenv';
 import { client } from '../../index.js';
 import {
@@ -7,6 +7,7 @@ import {
   ButtonStyle,
   EmbedBuilder,
 } from 'discord.js';
+import { ATTENDANCE } from '../../constants/messages.js';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const job = scheduleJob(time, async () => {
   const channel = client.channels.cache.get(channel_id);
 
   if (!channel) {
-    console.error('채널을 찾을 수 없습니다');
+    console.error(ATTENDANCE.NO_CHANNEL);
     return;
   }
 
@@ -31,7 +32,7 @@ const job = scheduleJob(time, async () => {
   // 메세지 내부에 임베드(박스) 생성
   const embed = new EmbedBuilder()
     .setTitle('출석 체크')
-    .setDescription('버튼을 눌러 출석하세요.');
+    .setDescription(ATTENDANCE.BUTTON_MESSAGE);
 
   await channel.send({ embeds: [embed], components: [row] });
   console.log('출석 버튼 전송 완료');
