@@ -26,6 +26,7 @@ export default {
       await fetchStudyTime(interaction, "day");
     } else if (subCommand === "-일주일") {
     } else if (subCommand === "-한달") {
+      await fetchStudyTime(interaction, "month");
     }
   },
 };
