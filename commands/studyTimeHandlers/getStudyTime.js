@@ -3,7 +3,7 @@ import { STUDY_TIME_QUERIES } from "../../db/queries/studyTimeQueries.js";
 import { getKoreanTime, formatKSTDate } from "../../utils/time.js";
 import { formatStudyTime } from "../../utils/time.js";
 
-export const fetchStudyTime = async (interaction, range) => {
+export const getStudyTime = async (interaction, range) => {
   const todayDate = formatKSTDate(getKoreanTime());
   const userDisplayName = interaction.member.displayName;
 

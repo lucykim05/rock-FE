@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import { fetchStudyTime } from "./studyTimeHandlers/fetchStudyTime.js ";
+import { getStudyTime } from "./studyTimeHandlers/getStudyTime.js ";
 
 export default {
   data: new SlashCommandBuilder()
@@ -23,10 +23,10 @@ export default {
   async execute(interaction) {
     const subCommand = interaction.options.getSubcommand();
     if (subCommand === "-하루") {
-      await fetchStudyTime(interaction, "day");
+      await getStudyTime(interaction, "day");
     } else if (subCommand === "-일주일") {
     } else if (subCommand === "-한달") {
-      await fetchStudyTime(interaction, "month");
+      await getStudyTime(interaction, "month");
     }
   },
 };
