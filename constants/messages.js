@@ -12,4 +12,5 @@ export const ATTENDANCE = Object.freeze({
   NO_RANKING: '순위 데이터가 없습니다요!',
   NO_CHANNEL: '채널이 없는 것 같습니다요! 확인해 보셔야겠어유!',
   BUTTON_MESSAGE: '출석하실 시간이여유 마님!!',
+  CHECK_CHANNEL_ID: '해당 명령어는 출석 채널에서 사용해주셔야 합니다요!',
 });
