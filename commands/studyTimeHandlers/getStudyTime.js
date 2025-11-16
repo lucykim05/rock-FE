@@ -42,8 +42,6 @@ export const getMonthlyStudyTime = async (interaction) => {
 
 const getStudyTimeFromDB = async (query, date) => {
   const queryResult = await pool.query(query, [date]);
-  console.log(queryResult);
   const totalStudyTime = queryResult.rows[0].total_study_time;
-
   return totalStudyTime;
 };
