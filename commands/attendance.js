@@ -1,7 +1,8 @@
-import { SlashCommandBuilder } from "discord.js";
-import { checkAttendance } from "./attendanceHandlers/check.js";
-import { getAttendanceStats } from "./attendanceHandlers/stats.js";
-import { getAttendanceRanking } from "./attendanceHandlers/ranking.js";
+import { SlashCommandBuilder } from 'discord.js';
+import { checkAttendance } from './attendanceHandlers/check.js';
+import { getAttendanceStats } from './attendanceHandlers/stats.js';
+import { getAttendanceRanking } from './attendanceHandlers/ranking.js';
+import { ATTENDANCE } from '../constants/messages.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -18,6 +19,13 @@ export default {
     ),
 
   async execute(interaction) {
+    const attendanceChannelId = process.env.ATTENDANCE_CHANNEL_ID;
+
+    if (interaction.channelId !== attendanceChannelId) {
+      await interaction.reply(ATTENDANCE.CHECK_CHANNEL_ID);
+      return;
+    }
+
     const subcommand = interaction.options.getSubcommand();
 
     if (subcommand === "체크") {
