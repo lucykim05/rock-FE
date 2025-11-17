@@ -11,6 +11,7 @@ import {
   Collection,
 } from 'discord.js';
 import './commands/attendanceHandlers/alarm.js';
+import { registerMembers } from './utils/registerMembers.js';
 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
@@ -102,3 +103,10 @@ for (const file of eventFiles) {
 
 // 클라이언트 토큰을 갖고 봇 로그인
 client.login(token);
+
+// 유저 등록
+try {
+  await registerMembers(client);
+} catch (err) {
+  console.error('멤버 등록 실패:', err);
+}
