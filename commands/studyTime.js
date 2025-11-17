@@ -25,6 +25,7 @@ export default {
     if (subCommand === "-하루") {
       await getStudyTime(interaction, "day");
     } else if (subCommand === "-일주일") {
+      await getStudyTime(interaction, "week");
     } else if (subCommand === "-한달") {
       await getStudyTime(interaction, "month");
     }
