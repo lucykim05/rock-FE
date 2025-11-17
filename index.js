@@ -10,13 +10,14 @@ import {
   Routes,
   Collection,
 } from 'discord.js';
+import './commands/attendanceHandlers/alarm.js';
 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
 // 새로운 클라이언트 인스턴스 생성 = 봇
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
