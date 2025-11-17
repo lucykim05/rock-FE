@@ -6,17 +6,22 @@ import { STUDYTIME } from "../../constants/messages.js";
 
 export const getStudyTime = async (interaction, value) => {
   const userDisplayName = interaction.member.displayName;
+  const userId = interaction.user.id;
   const todayDate = formatKSTDate(getKoreanTime()); //yyyy-mm-dd 문자열 형식
   let response = "";
 
   try {
     if (value === "day") {
-      response = await dailyStudyTimeMsg(todayDate, userDisplayName);
+      response = await dailyStudyTimeMsg(todayDate, userId, userDisplayName);
     } else if (value === "week") {
-      response = await weeklyStudyTimeMsg(todayDate, userDisplayName);
+      response = await weeklyStudyTimeMsg(todayDate, userId, userDisplayName);
     } else if (value === "month") {
       const monthPattern = `${todayDate.substring(0, 7)}%`;
-      response = await monthlyStudyTimeMsg(monthPattern, userDisplayName);
+      response = await monthlyStudyTimeMsg(
+        monthPattern,
+        userId,
+        userDisplayName
+      );
     }
   } catch (error) {
     response = STUDYTIME.ERROR_FETCH_DB_DATA;
@@ -25,16 +30,16 @@ export const getStudyTime = async (interaction, value) => {
   }
 };
 
-const dailyStudyTimeMsg = async (date, userDisplayName) => {
+const dailyStudyTimeMsg = async (date, userId, userDisplayName) => {
   const dailyStudyTime = await getStudyTimeFromDB(
     STUDY_TIME_QUERIES.FETCH_DAILY_STUDY_TIME,
-    [date]
+    [userId, date]
   );
   const formattedStudyTime = formatStudyTime(dailyStudyTime);
   return `[${userDisplayName}] 마님의 오늘(${date}) 공부시간은 ${formattedStudyTime} 여유!`;
 };
 
-const weeklyStudyTimeMsg = async (date, userDisplayName) => {
+const weeklyStudyTimeMsg = async (date, userId, userDisplayName) => {
   const weekStartTimeStamp = getWeekStart(date);
   const weekStartDate = formatKSTDate(weekStartTimeStamp);
 
@@ -43,7 +48,7 @@ const weeklyStudyTimeMsg = async (date, userDisplayName) => {
 
   const weeklyStudyTime = await getStudyTimeFromDB(
     STUDY_TIME_QUERIES.FETCH_WEEKLY_STUDY_TIME,
-    [weekStartDate, weekEndDate]
+    [userId, weekStartDate, weekEndDate]
   );
 
   const formattedStudyTime = formatStudyTime(weeklyStudyTime);
@@ -51,10 +56,10 @@ const weeklyStudyTimeMsg = async (date, userDisplayName) => {
   return `${userDisplayName} 마님의 이번 주(${weekStartDate} ~ ${weekEndDate})의 공부시간은 ${formattedStudyTime} 여유!`;
 };
 
-const monthlyStudyTimeMsg = async (datePattern, userDisplayName) => {
+const monthlyStudyTimeMsg = async (datePattern, userId, userDisplayName) => {
   const monthlyStudyTime = await getStudyTimeFromDB(
     STUDY_TIME_QUERIES.FETCH_MONTHLY_STUDY_TIME,
-    [datePattern]
+    [userId, datePattern]
   );
   const formattedStudyTime = formatStudyTime(monthlyStudyTime);
 
