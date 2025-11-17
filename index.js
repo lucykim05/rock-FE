@@ -105,8 +105,11 @@ for (const file of eventFiles) {
 client.login(token);
 
 // 유저 등록
-try {
-  await registerMembers(client);
-} catch (err) {
-  console.error('멤버 등록 실패:', err);
-}
+client.once('clientReady', async () => {
+  try {
+    await registerMembers(client);
+    console.log('멤버 등록 완료');
+  } catch (err) {
+    console.error('멤버 등록 실패', err);
+  }
+});
