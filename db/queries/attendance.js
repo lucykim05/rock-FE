@@ -2,14 +2,14 @@
 
 export const ATTENDANCE_QUERIES = {
   // 사용자 등록
-  REGISTER_USER: `INSERT INTO users (user_id, username)
-  VALUES ($1, $2)
+  REGISTER_USER: `INSERT INTO users (user_id, guild_id, username)
+  VALUES ($1, $2, $3)
   ON CONFLICT (user_id) DO NOTHING -- 기존 유저면 아무것도 안해도 됨`,
 
   // 출석 등록
-  REGISTER_ATTENDANCE: `INSERT INTO attendance (user_id, attendance_date, attendance_time, is_morning)
-  VALUES ($1, $2, $3, $4) -- 변수로 4개 다 전달 
-  ON CONFLICT (user_id, attendance_date) DO NOTHING -- 기존에 출석했으면 아무것도 안해도 됨
+  REGISTER_ATTENDANCE: `INSERT INTO attendance (user_id, guild_id, attendance_date, attendance_time, is_morning)
+  VALUES ($1, $2, $3, $4, $5) -- 변수로 5개 다 전달 
+  ON CONFLICT (user_id, guild_id, attendance_date) DO NOTHING -- 기존에 출석했으면 아무것도 안해도 됨
   RETURNING attendance_id`,
 
   // 어제 출석 여부 확인

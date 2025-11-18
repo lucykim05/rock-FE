@@ -3,10 +3,11 @@ import { ATTENDANCE } from '../../constants/messages.js';
 
 export async function checkAttendance(interaction) {
   const userId = interaction.user.id;
+  const guildId = interaction.guildId;
   const username = interaction.member.displayName;
 
   try {
-    const result = await processAttendance(userId, username);
+    const result = await processAttendance(userId, guildId, username);
     // 출석 등록 및 통계 업데이트
 
     if (result.alreadyChecked) {

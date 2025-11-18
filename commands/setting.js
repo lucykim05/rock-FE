@@ -1,7 +1,8 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { ChannelType, SlashCommandBuilder } from 'discord.js';
 import { isAdmin } from '../utils/authority.js';
 import { setAttendanceChannel } from './settingHandlers/setAttendanceChannel.js';
 import { setAttendanceTime } from './settingHandlers/setAttendanceTime.js';
+import { setStudyChannel } from './settingHandlers/setStudyChannel.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -15,6 +16,7 @@ export default {
           option
             .setName('채널')
             .setDescription('출석 채널로 설정합니다.')
+            .addChannelTypes(ChannelType.GuildText)
             .setRequired(true)
         )
     )
@@ -30,6 +32,18 @@ export default {
             .setMinValue(0)
             .setMaxValue(23)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('공부채널설정')
+        .setDescription('[관리자 전용] 공부 음성 채널을 설정합니다.')
+        .addChannelOption((option) =>
+          option
+            .setName('음성채널')
+            .setDescription('공부 음성 채널로 설정합니다.')
+            .addChannelTypes(ChannelType.GuildVoice)
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction) {
@@ -44,6 +58,8 @@ export default {
       await setAttendanceChannel(interaction);
     } else if (subcommand === '출석시간설정') {
       await setAttendanceTime(interaction);
+    } else if (subcommand === '공부채널설정') {
+      await setStudyChannel(interaction);
     }
   },
 };
