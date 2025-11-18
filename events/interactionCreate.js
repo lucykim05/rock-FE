@@ -5,6 +5,18 @@ import { checkAttendance } from '../commands/attendanceHandlers/check.js';
 export default {
   name: Events.InteractionCreate,
   async execute(interaction) {
+    // interaction이 버튼이면(출석) 출석 체크 command 실행
+    if (interaction.isButton()) {
+      if (interaction.customId === '출석') {
+        try {
+          await checkAttendance(interaction);
+        } catch (error) {
+          console.error(error);
+          await interaction.reply('출석 체크 알림 실패');
+        }
+      }
+    }
+
     if (!interaction.isChatInputCommand()) return;
     const command = interaction.client.commands.get(interaction.commandName);
     if (!command) {
@@ -28,6 +40,7 @@ export default {
           flags: MessageFlags.Ephemeral,
         });
       }
+      return;
     }
     if (interaction.isButton()) {
       if (interaction.customId === 'attendance_check') {

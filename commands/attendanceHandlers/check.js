@@ -6,23 +6,32 @@ export async function checkAttendance(interaction) {
   const username = interaction.member.displayName;
 
   try {
+    await interaction.deferReply();
+
     const result = await processAttendance(userId, username);
-    // 출석 등록 및 통계 업데이트
 
     if (result.alreadyChecked) {
-      await interaction.reply(ATTENDANCE.ALREADY_CHECKED);
+      await interaction.editReply(ATTENDANCE.ALREADY_CHECKED);
       return;
     }
-    // 중복 출석이면 alreadychecked true로 반환하게 해둠
 
     const morning = result.isMorning ? ATTENDANCE.MORNING_ATTEND : '';
     const message =
       `<@${userId}> 마님, 출석이 완료 됐습니다요! ${morning}\n\n` +
       `연속 출석 ${result.streakDays}일 째입니다요!`;
 
-    await interaction.reply(message);
+    await interaction.editReply(message);
   } catch (error) {
     console.error('출석 오류', error);
-    await interaction.reply(ATTENDANCE.ERROR_ATTEND);
+
+    try {
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply(ATTENDANCE.ERROR_ATTEND);
+      } else {
+        await interaction.reply(ATTENDANCE.ERROR_ATTEND);
+      }
+    } catch (replyError) {
+      console.error('에러 메시지 전송 실패:', replyError);
+    }
   }
 }
