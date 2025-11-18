@@ -43,10 +43,11 @@ export const ATTENDANCE_QUERIES = {
     AND EXTRACT(YEAR FROM attendance_date) = $2
     AND EXTRACT(MONTH FROM attendance_date) = $3`,
 
-  GET_RANKING: `SELECT states.user_id, states.total_attendance, users.username
-  FROM states, users
-  WHERE states.user_id = users.user_id
-  ORDER BY states.total_attendance DESC
+  GET_RANKING: `SELECT s.user_id, s.total_attendance, u.username
+  FROM states s
+  INNER JOIN users u ON s.user_id = u.user_id
+  WHERE s.guild_id = $1
+  ORDER BY s.total_attendance DESC
   LIMIT 5
   `,
 };

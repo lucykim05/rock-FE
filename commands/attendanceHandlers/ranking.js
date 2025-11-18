@@ -4,7 +4,8 @@ import { ATTENDANCE_QUERIES } from '../../db/queries/attendance.js';
 
 export async function getAttendanceRanking(interaction) {
   try {
-    const result = await pool.query(ATTENDANCE_QUERIES.GET_RANKING);
+    const guildId = interaction.guildId;
+    const result = await pool.query(ATTENDANCE_QUERIES.GET_RANKING, [guildId]);
 
     if (result.rows.length === 0) {
       return ATTENDANCE.NO_RANKING;
