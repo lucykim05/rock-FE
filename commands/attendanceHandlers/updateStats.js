@@ -35,10 +35,10 @@ function calculateNewStats(stats, attendedYesterday) {
 }
 
 // 출석 통계 조회
-export async function getStats(userId) {
-  const result = await getAttendanceStats(userId);
+export async function getStats(userId, guildId) {
+  const result = await getAttendanceStats(userId, guildId);
 
-  const monthlyRate = await calculateMonthlyAttendance(userId);
+  const monthlyRate = await calculateMonthlyAttendance(userId, guildId);
 
   return {
     ...result,
@@ -46,14 +46,14 @@ export async function getStats(userId) {
   };
 }
 
-export async function calculateMonthlyAttendance(userId) {
+export async function calculateMonthlyAttendance(userId, guildId) {
   const now = new Date();
   const currYear = now.getFullYear();
   const currMonth = now.getMonth() + 1;
 
   const daysInMonth = new Date(currYear, currMonth, 0).getDate();
 
-  const result = await getMonthlyCount(userId);
+  const result = await getMonthlyCount(userId, guildId);
   const monthlyCount = result.rows[0]?.count || 0;
   const monthlyRate = Math.round((monthlyCount / daysInMonth) * 100);
 
