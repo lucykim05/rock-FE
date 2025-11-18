@@ -101,7 +101,7 @@
 
 ### 배포 & 협업
 
-![Railway](https://img.shields.io/badge/Railway-0B0D0E?logo=railway&logoColor=fff&style=for-the-badge)
+![Koyeb](https://img.shields.io/badge/Koyeb-6534FF?logo=koyeb&logoColor=fff&style=for-the-badge)
 ![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=fff&style=for-the-badge)
 ![Notion](https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=fff&style=for-the-badge)
 
@@ -119,7 +119,7 @@
             </a>
         </td>
         <td align = 'center' width = '200'>
-            <a href = 'https://ancient-shrine-3f1.notion.site/Main-Page-2a1151b029cd80e5a62ee7e896b885fd?source=copy_link' target = 'blank'>
+            <a href = 'https://ancient-shrine-3f1.notion.site/Main-Page-2ae151b029cd80439f2fc27619e4f1f3?pvs=74' target = 'blank'>
                 <img src = "https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width = '80' height = '80' alt = 'notion'/>
             </a>
         </td>
