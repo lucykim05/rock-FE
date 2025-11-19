@@ -2,10 +2,6 @@ import { SlashCommandBuilder } from 'discord.js';
 import { checkAttendance } from './attendanceHandlers/check.js';
 import { getAttendanceStats } from './attendanceHandlers/stats.js';
 import { getAttendanceRanking } from './attendanceHandlers/ranking.js';
-
-import { isAdmin } from '../utils/authority.js';
-import { setAttendanceChannel } from './settingHandlers/setAttendanceChannel.js';
-
 import { ATTENDANCE } from '../constants/messages.js';
 import { ATTENDANCE_QUERIES } from '../db/queries/attendance.js';
 import pool from '../db/database.js';
@@ -37,14 +33,6 @@ export default {
     }
 
     const subcommand = interaction.options.getSubcommand();
-
-    if (subcommand === '출석설정') {
-      if (!isAdmin(interaction)) {
-        return interaction.reply('이 기능은 관리자만 사용 가능합니다.');
-      }
-      await setAttendanceChannel(interaction);
-      return;
-    }
 
     if (subcommand === '체크') {
       await checkAttendance(interaction);
