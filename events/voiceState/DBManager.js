@@ -1,23 +1,38 @@
+import {
+  StartTimeDBSaveFailError,
+  FetchStartTimeError,
+  EndTimeDBSaveFailError,
+  FetchStudyTimeError,
+} from "../../error/Errors.js";
 import pool from "../../db/database.js";
 import { STUDY_TIME_QUERIES } from "../../db/queries/studyTimeQueries.js";
-export const DBsaveStartTime = async (newState, startTime, date) => {
-  await pool.query(STUDY_TIME_QUERIES.SAVE_STUDY_TIME, [
-    newState.member.user.id,
-    date,
-    startTime,
-    null,
-    null,
-    newState.guild.id,
-  ]);
-};
-import { formatKSTDate } from "../../utils/time.js";
 
+export const DBsaveStartTime = async (newState, startTime, date) => {
+  try {
+    await pool.query(STUDY_TIME_QUERIES.SAVE_STUDY_TIME, [
+      newState.member.user.id,
+      date,
+      startTime,
+      null,
+      null,
+      newState.guild.id,
+    ]);
+  } catch (error) {
+    throw new StartTimeDBSaveFailError(error);
+  }
+};
+
+import { formatKSTDate } from "../../utils/time.js";
 const fetchStartTime = async (userId, guildId) => {
-  const fetchedStartTime = await pool.query(
-    STUDY_TIME_QUERIES.FETCH_START_TIME,
-    [userId, guildId]
-  );
-  return fetchedStartTime.rows[0].start_time;
+  try {
+    const fetchedStartTime = await pool.query(
+      STUDY_TIME_QUERIES.FETCH_START_TIME,
+      [userId, guildId]
+    );
+    return fetchedStartTime.rows[0].start_time;
+  } catch (error) {
+    throw new FetchStartTimeError(error);
+  }
 };
 
 export const DBsaveEndTime = async (newState, endTime, date) => {
@@ -27,14 +42,18 @@ export const DBsaveEndTime = async (newState, endTime, date) => {
   const studyTime = Math.floor(
     (endTime.getTime() - startTime.getTime()) / 1000
   );
-  await pool.query(STUDY_TIME_QUERIES.UPDATE_STUDY_TIME, [
-    userId,
-    date,
-    startTime,
-    endTime,
-    studyTime,
-    guildId,
-  ]);
+  try {
+    await pool.query(STUDY_TIME_QUERIES.UPDATE_STUDY_TIME, [
+      userId,
+      date,
+      startTime,
+      endTime,
+      studyTime,
+      guildId,
+    ]);
+  } catch (error) {
+    throw new EndTimeDBSaveFailError(error);
+  }
 };
 
 export const fetchStudyTimeforDM = async (newState) => {
@@ -42,13 +61,17 @@ export const fetchStudyTimeforDM = async (newState) => {
   const guildId = newState.guild.id;
   const date = formatKSTDate(new Date());
 
-  const recentStudyTime = await pool.query(
-    STUDY_TIME_QUERIES.FETCH_RECENT_STUDY_TIME,
-    [userId, guildId]
-  );
-  const dailyStudyTime = await pool.query(
-    STUDY_TIME_QUERIES.FETCH_DAILY_STUDY_TIME,
-    [userId, guildId, date]
-  );
-  return [recentStudyTime, dailyStudyTime];
+  try {
+    const recentStudyTime = await pool.query(
+      STUDY_TIME_QUERIES.FETCH_RECENT_STUDY_TIME,
+      [userId, guildId]
+    );
+    const dailyStudyTime = await pool.query(
+      STUDY_TIME_QUERIES.FETCH_DAILY_STUDY_TIME,
+      [userId, guildId, date]
+    );
+    return [recentStudyTime, dailyStudyTime];
+  } catch (error) {
+    throw new FetchStudyTimeError(error);
+  }
 };
