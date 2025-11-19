@@ -94,6 +94,7 @@ export class User {
         formattedStartTime,
         formattedEndTime,
         this.#totalStudyTime,
+        this.#newState.guild.id,
       ]);
     } catch (error) {
       throw new SaveStudyTimeToDBFailError(this.#newState, this.#userId, error);
