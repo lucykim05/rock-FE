@@ -1,10 +1,6 @@
 import { Events } from "discord.js";
-import { User } from "./UserClass/User.js";
-import {
-  StudyTimeCountError,
-  SendingChannelMessageFailError,
-} from "../error/Errors.js";
-import { CHANNEL } from "../constants/messages.js";
+import { StudyTimeCountError } from "../error/Errors.js";
+import { checkStudy } from "./voiceState/studyTimeManager.js";
 import { STUDY_TIME_QUERIES } from "../db/queries/studyTimeQueries.js";
 import pool from "../db/database.js";
 
@@ -12,7 +8,7 @@ export default {
   name: Events.VoiceStateUpdate,
   //client는 voiceStateUpdate를 일으킨 member의 VoiceState를 반환
   async execute(oldState, newState) {
-    const studyChannelId = await getStudyChannelId(newState.guild.id);
+    const studyChannelId = await fetchStudyChannelId(newState.guild.id); //DB에 저장된 현재 guild의 id를 가져옴
 
     try {
       //스터디를 진행하는 음성채널에 변동이 있는 경우 (= 입/퇴장)
@@ -20,9 +16,7 @@ export default {
         oldState.channelId === studyChannelId ||
         newState.channelId === studyChannelId
       ) {
-        const client = newState.client;
-        const user = getStudyUser(newState, client);
-        checkStudy(client, user, studyChannelId); //현재 사용자의 입/퇴장 상태에 따라 공부시간 측정/종료
+        checkStudy(newState, studyChannelId); //현재 사용자의 입/퇴장 상태에 따라 공부시간 측정/종료
       }
     } catch (error) {
       if (error instanceof StudyTimeCountError) {
@@ -41,51 +35,9 @@ export default {
   },
 };
 
-const getStudyChannelId = async (guildId) => {
+const fetchStudyChannelId = async (guildId) => {
   const queryResult = pool.query(STUDY_TIME_QUERIES.FETCH_STUDY_CHANNEL_ID, [
     guildId.toString(),
   ]);
   return (await queryResult).rows[0].study_channel_id;
-};
-
-const getStudyUser = (newState, client) => {
-  if (!client.studyUsers) client.studyUsers = new Map(); //만약 client에 studyUsers라는 저장소가 없다면 만들어주기
-  //만약 client의 studyUsersMap에 해당 사용자의 인스턴스가 저장되어 있지 않다면, 새로 만들어서 추가하고
-  //만약 저장이 되어 있다면 해당 value를 꺼내와서 할당
-  const studyUsersMap = client.studyUsers;
-  const userId = newState.member.user.id;
-  if (studyUsersMap.has(userId)) {
-    const user = studyUsersMap.get(userId);
-    user.updateState(newState);
-    return user;
-  }
-  return new User(newState);
-};
-
-const checkStudy = (client, user, studyChannelId) => {
-  const curChannelId = user.curState.channelId;
-  const curState = user.curState;
-  if (curChannelId === studyChannelId) {
-    //입장
-    user.startTimer();
-    const msg = user.makeMessage(CHANNEL.ENTER_MSG);
-    sendMessage(curState, msg, studyChannelId);
-  } else {
-    //퇴장
-    user.endTimer();
-    const msg = user.makeMessage(CHANNEL.EXIT_MSG);
-    sendMessage(curState, msg, studyChannelId);
-  }
-  client.studyUsers.set(user.userId, user); //client에 해당 사용자의 상태 업데이트
-};
-
-const sendMessage = (curState, msg, studyChannelId) => {
-  try {
-    const channelCollection = curState.guild.channels.cache; //서버에 존재하는 모든 채널을 Collection 형태로 리턴
-    //Collection을 순회하여 동일한 voice Channel id를 가진 객체를 찾은 뒤, 해당 객체.send('메세지') 해야 함
-    const voiceChannel = channelCollection.get(studyChannelId);
-    voiceChannel.send(msg);
-  } catch (error) {
-    throw new SendingChannelMessageFailError(curState, error);
-  }
 };
