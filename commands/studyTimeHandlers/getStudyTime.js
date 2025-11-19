@@ -50,6 +50,11 @@ export const getStudyTime = async (interaction, value) => {
   }
 };
 
+const getStudyTimeFromDB = async (query, dateArray) => {
+  const queryResult = await pool.query(query, dateArray);
+  return queryResult.rows[0]?.total_study_time ?? 0;
+};
+
 const dailyStudyTimeMsg = async (date, userId, guildId, userDisplayName) => {
   const dailyStudyTime = await getStudyTimeFromDB(
     STUDY_TIME_QUERIES.FETCH_DAILY_STUDY_TIME,
@@ -98,11 +103,6 @@ const monthlyStudyTimeMsg = async (
 
   const dateOnlyMonth = datePattern.substring(5, 7);
   return `[${userDisplayName}] 마님의 ${dateOnlyMonth}월의 공부시간은 ${formattedStudyTime} 여유!`;
-};
-
-const getStudyTimeFromDB = async (query, dateArray) => {
-  const queryResult = await pool.query(query, dateArray);
-  return queryResult.rows[0]?.total_study_time ?? 0;
 };
 
 const getWeekStart = (date) => {
