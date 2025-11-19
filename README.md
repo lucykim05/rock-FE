@@ -9,6 +9,7 @@
 3. [**기술 스택**](#3)
 4. [**프로젝트 문서**](#4)
 5. [**주요 기능**](#5)
+6. [**플로우 차트**](#6)
 
 <br />
 
@@ -194,6 +195,8 @@
 | <img src = 'https://raw.githubusercontent.com/lucykim05/image/main/rock_FE/1b884d2bc75e4a9ca9b6b0da6a64d7ce.gif' width = '400'/>
   
 <br />
+
+<div id='6'></div>
 
 ## 플로우 차트
 
