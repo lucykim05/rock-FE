@@ -24,7 +24,7 @@ export const ATTENDANCE_QUERIES = {
 
   UPDATE_STATS: `INSERT INTO states (user_id, guild_id, total_attendance, streak_days, max_streak)
   VALUES($1, $2, $3, $4, $5)
-  ON CONFLICT(user_id) DO UPDATE -- 기존 유저면
+  ON CONFLICT(user_id, guild_id) DO UPDATE -- 기존 유저면
   SET -- 내용 업데이트
     total_attendance = $3, 
     streak_days = $4,
