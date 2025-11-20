@@ -6,6 +6,8 @@ import {
 } from "../../error/Errors.js";
 import pool from "../../db/database.js";
 import { STUDY_TIME_QUERIES } from "../../db/queries/studyTimeQueries.js";
+import { formatKSTDate } from "../../utils/time.js";
+import { UNIT } from "../../constants/units.js";
 
 export const DBsaveStartTime = async (newState, startTime, date) => {
   try {
@@ -22,14 +24,13 @@ export const DBsaveStartTime = async (newState, startTime, date) => {
   }
 };
 
-import { formatKSTDate } from "../../utils/time.js";
 const fetchStartTime = async (userId, guildId) => {
   try {
     const fetchedStartTime = await pool.query(
       STUDY_TIME_QUERIES.FETCH_START_TIME,
       [userId, guildId]
     );
-    return fetchedStartTime.rows[0].start_time;
+    return fetchedStartTime.rows[0]?.start_time;
   } catch (error) {
     throw new FetchStartTimeError(error);
   }
@@ -40,7 +41,7 @@ export const DBsaveEndTime = async (newState, endTime, date) => {
   const guildId = newState.guild.id;
   const startTime = await fetchStartTime(userId, guildId);
   const studyTime = Math.floor(
-    (endTime.getTime() - startTime.getTime()) / 1000
+    (endTime.getTime() - startTime.getTime()) / UNIT.MS2SEC
   );
   try {
     await pool.query(STUDY_TIME_QUERIES.UPDATE_STUDY_TIME, [
