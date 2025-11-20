@@ -38,6 +38,5 @@ const startTimer = async (newState) => {
 
 const endTimer = async (newState) => {
   const endTime = new Date();
-  const date = formatKSTDate(new Date());
-  await DBsaveEndTime(newState, endTime, date);
+  await DBsaveEndTime(newState, endTime);
 };

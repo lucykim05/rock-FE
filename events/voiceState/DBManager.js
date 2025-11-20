@@ -24,33 +24,37 @@ export const DBsaveStartTime = async (newState, startTime, date) => {
   }
 };
 
-const fetchStartTime = async (userId, guildId) => {
+const fetchStartTimeAndSessionId = async (userId, guildId) => {
   try {
     const fetchedStartTime = await pool.query(
-      STUDY_TIME_QUERIES.FETCH_START_TIME,
+      STUDY_TIME_QUERIES.FETCH_START_TIME_AND_SESSION_ID,
       [userId, guildId]
     );
-    return fetchedStartTime.rows[0]?.start_time;
+
+    const startTime = fetchedStartTime.rows[0]?.start_time;
+    const sessionId = fetchedStartTime.rows[0]?.session_id;
+    return [startTime, sessionId];
   } catch (error) {
     throw new FetchStartTimeError(error);
   }
 };
 
-export const DBsaveEndTime = async (newState, endTime, date) => {
+export const DBsaveEndTime = async (newState, endTime) => {
   const userId = newState.member.user.id;
   const guildId = newState.guild.id;
-  const startTime = await fetchStartTime(userId, guildId);
+  const [startTime, sessionId] = await fetchStartTimeAndSessionId(
+    userId,
+    guildId
+  );
   const studyTime = Math.floor(
     (endTime.getTime() - startTime.getTime()) / UNIT.MS2SEC
   );
+
   try {
     await pool.query(STUDY_TIME_QUERIES.UPDATE_STUDY_TIME, [
-      userId,
-      date,
-      startTime,
       endTime,
       studyTime,
-      guildId,
+      sessionId,
     ]);
   } catch (error) {
     throw new EndTimeDBSaveFailError(error);
