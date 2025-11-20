@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CalendarView from './components/CalendarView';
 import './components/calendar.css';
 import { Button } from './components/Button';
+import GuildDropdown from './components/GuildDropdown';
 
 function App() {
   // 테스트용 더미 데이터
@@ -15,6 +16,7 @@ function App() {
       <h1 className="text-2xl mb-4">출석 캘린더</h1>
       <Button>로그인</Button>
       <CalendarView attendanceDates={attendanceDates} />
+      <GuildDropdown />
     </div>
   );
 }
