@@ -9,8 +9,12 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
 
       {/* 버튼들 */}
       <div className="flex gap-4">
-        <Button onClick={onLogin}>로그인</Button>
-        <Button onClick={onLogout}>로그아웃</Button>
+        <Button>Contact</Button>
+        {isLoggedIn ? (
+          <Button onClick={onLogout}>로그아웃</Button>
+        ) : (
+          <Button onClick={onLogin}>로그인</Button>
+        )}
       </div>
     </header>
   );
