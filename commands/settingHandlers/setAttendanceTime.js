@@ -4,11 +4,17 @@ import { scheduleManager } from '../../events/alarm/schedule.js';
 
 export async function setAttendanceTime(interaction) {
   const guildId = interaction.guildId;
-  const hour = interaction.options.getInteger('시간');
-  const minute = interaction.options.getInteger('분') || 0;
+  const kstHour = interaction.options.getInteger('시간');
+  const kstMinute = interaction.options.getInteger('분') || 0;
 
   try {
-    const timeSetting = `${minute} ${hour} * * *`;
+    let utcHour = kstHour - 9;
+    let utcMinute = kstMinute;
+
+    if (utcHour < 0) {
+      utcHour += 24;
+    }
+    const timeSetting = `${utcMinute} ${utcHour} * * *`;
 
     const result = await pool.query(SETTING_QUERY.UPDATE_TIME, [
       timeSetting,
