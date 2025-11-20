@@ -3,12 +3,13 @@ import { ATTENDANCE } from '../../constants/messages.js';
 
 export async function checkAttendance(interaction) {
   const userId = interaction.user.id;
+  const guildId = interaction.guildId;
   const username = interaction.member.displayName;
 
   try {
     await interaction.deferReply();
 
-    const result = await processAttendance(userId, username);
+    const result = await processAttendance(userId, guildId, username);
 
     if (result.alreadyChecked) {
       await interaction.editReply(ATTENDANCE.ALREADY_CHECKED);

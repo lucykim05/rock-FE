@@ -1,50 +1,78 @@
--- Users
-CREATE TABLE users (
-    user_id VARCHAR(20) PRIMARY KEY,
-    username VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE Session (
+    session_id SERIAL NOT NULL,
+    user_id VARCHAR NOT NULL,
+    guild_id INT NOT NULL,
+    study_date DATE,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    total_study_time INTEGER DEFAULT 0,
+    PRIMARY KEY (session_id, user_id, guild_id)
 );
 
--- Attendance
-CREATE TABLE attendance (
-    attendance_id SERIAL PRIMARY KEY,
-    user_id VARCHAR(20) NOT NULL,
-    attendance_date DATE NOT NULL,
-    attendance_time TIME NOT NULL,
-    is_morning BOOLEAN NOT NULL DEFAULT false,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    UNIQUE(user_id, attendance_date)
+CREATE TABLE Stats (
+    state_id SERIAL NOT NULL,
+    user_id VARCHAR NOT NULL,
+    guild_id INT NOT NULL,
+    streak_days INTEGER,
+    max_streak INTEGER,
+    total_attendance INTEGER,
+    total_study INTEGER,
+    updated_at TIMESTAMP,
+    PRIMARY KEY (state_id, user_id, guild_id)
 );
 
--- Session
-CREATE TABLE session (
-    session_id SERIAL PRIMARY KEY,
-    user_id VARCHAR(20) NOT NULL,
-    study_date DATE NOT NULL,
-    start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NULL,
-    duration_minutes INTEGER NULL,
-    total_study_time INTEGER,
-    
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE Users (
+    user_id VARCHAR NOT NULL,
+    guild_id INT NOT NULL,
+    username VARCHAR NOT NULL,
+    created_at TIMESTAMP,
+    PRIMARY KEY (user_id, guild_id)
 );
 
--- Stats
-CREATE TABLE states (
-    stat_id SERIAL PRIMARY KEY,
-    user_id VARCHAR(20) UNIQUE NOT NULL,
-    streak_days INTEGER DEFAULT 0,
-    max_streak INTEGER DEFAULT 0,
-    total_attendance INTEGER DEFAULT 0,
-    total_study_minutes INTEGER DEFAULT 0,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE Attendance (
+    attendance_id SERIAL NOT NULL,
+    user_id VARCHAR NOT NULL,
+    guild_id INT NOT NULL,
+    attendance_date DATE,
+    attendance_time TIME,
+    is_morning BOOLEAN DEFAULT false,
+    created_at TIMESTAMP,
+    PRIMARY KEY (attendance_id, user_id, guild_id)
 );
 
--- 인덱스
-CREATE INDEX idx_attendance_user_date ON attendance(user_id, attendance_date DESC);
-CREATE INDEX idx_session_user_date ON session(user_id, study_date DESC);
-CREATE INDEX idx_session_active ON session(user_id) WHERE end_time IS NULL;
+CREATE TABLE Settings (
+    guild_id INT NOT NULL,
+    attendance_channel_id VARCHAR,
+    study_channel_id VARCHAR,
+    attendance_time INT,
+    created_at TIMESTAMP,
+    PRIMARY KEY (guild_id)
+);
+
+ALTER TABLE Session
+    ADD CONSTRAINT FK_Users_TO_Session_1 FOREIGN KEY (user_id)
+    REFERENCES Users (user_id);
+
+ALTER TABLE Session
+    ADD CONSTRAINT FK_Users_TO_Session_2 FOREIGN KEY (guild_id)
+    REFERENCES Users (guild_id);
+
+ALTER TABLE Stats
+    ADD CONSTRAINT FK_Users_TO_Stats_1 FOREIGN KEY (user_id)
+    REFERENCES Users (user_id);
+
+ALTER TABLE Stats
+    ADD CONSTRAINT FK_Users_TO_Stats_2 FOREIGN KEY (guild_id)
+    REFERENCES Users (guild_id);
+
+ALTER TABLE Users
+    ADD CONSTRAINT FK_Settings_TO_Users_1 FOREIGN KEY (guild_id)
+    REFERENCES Settings (guild_id);
+
+ALTER TABLE Attendance
+    ADD CONSTRAINT FK_Users_TO_Attendance_1 FOREIGN KEY (user_id)
+    REFERENCES Users (user_id);
+
+ALTER TABLE Attendance
+    ADD CONSTRAINT FK_Users_TO_Attendance_2 FOREIGN KEY (guild_id)
+    REFERENCES Users (guild_id);

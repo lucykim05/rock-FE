@@ -42,5 +42,10 @@ export default {
       }
       return;
     }
+    if (interaction.isButton()) {
+      if (interaction.customId === 'attendance_check') {
+        await checkAttendance(interaction);
+      }
+    }
   },
 };

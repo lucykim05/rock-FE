@@ -4,7 +4,7 @@ import { getStats } from './updateStats.js';
 export async function getAttendanceStats(interaction) {
   try {
     // 통계 가져오기
-    const stats = await getStats(interaction.user.id);
+    const stats = await getStats(interaction.user.id, interaction.guildId);
 
     if (!stats) {
       return interaction.reply(ATTENDANCE.NO_RECORD);

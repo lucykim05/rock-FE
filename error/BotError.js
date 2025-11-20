@@ -1,6 +1,7 @@
 export class BotError extends Error {
-  constructor(data) {
-    super(data);
+  constructor(message, cause) {
+    super(message);
     this.name = this.constructor.name;
+    this.cause = cause;
   }
 }
