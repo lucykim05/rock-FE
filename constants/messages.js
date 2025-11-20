@@ -19,3 +19,58 @@ export const STUDYTIME = Object.freeze({
   ERROR_FETCH_DB_DATA:
     "이런, 뭔가 꼬였는갑네... 공부 시간을 못 불러오겠는디요?",
 });
+
+const KEYWORDS = Object.freeze({
+  BOX: "```",
+
+  HELLO: "`/인사`",
+  HUMOR: "`/오늘의유머`",
+
+  ATTENDANCE_CHECK: "`/출석체크`",
+  ATTENDANCE_STATE: "`/출석현황`",
+  ATTENDANCE_STAT: "`/출석통계`",
+
+  STUDY: "`공부`",
+  STUDYTIME: "`/공부시간`",
+
+  SETTING: "`/세팅`",
+  HELP: "`/도움말`",
+});
+
+export const HELP_MESSAGE = `
+### 안녕하셔유 마님 지는 돌쇠예유! 마님의 공부를 위해 제 사용법을 알려드립지요.
+
+
+## 기본
+- ${KEYWORDS.HELLO} : 지가 인사를 해드려유!
+- ${KEYWORDS.HUMOR} : 개발자 마님을 위해 지가 고오급 유머를 던져드려유 흐흐...
+
+## 출석
+### 출석 설정 명령어
+
+- ${KEYWORDS.SETTING} 출석채널설정 : 출석체크를 할 채널을 정할 수 있는 명령어예유.\n**출석 채널을 정하기 않으면 출석을 기록하지 못해유!** \n
+- ${KEYWORDS.SETTING} 출석시간설정 : 출석체크 알람을 설정하는 명령어여유!\n시간을 설정해주시면 지가 달려와서 마님께 알려드려유.
+
+### 출석 체크 명령어
+- ${KEYWORDS.ATTENDANCE_CHECK} : 출석 채널에서 출석 체크를 할 수 있어유.\n하루에 한 번만 사용할 수 있고 **출석 채널이 아닌 곳에서 하면 작동하지 않아유!** \n
+- ${KEYWORDS.ATTENDANCE_STATE} : 총 출석 횟수와 연속으로 몇 번이나 출석했는지, 그리고 이번 달 출석률을 확인 할 수 있어유. \n
+- ${KEYWORDS.ATTENDANCE_STAT} : 모든 멤버들의 출석 순위를 확인할 수 있어유.\n출석 1등 마님은 제가 특별히 모시것슈!!\n
+
+
+## 공부
+### 스터디 채널 설정 명령어 
+- ${KEYWORDS.SETTING} 공부채널설정 : 공부시간을 측정할 음성 채널을 설정할 수 있슈!\n설정한 음성채널에 마님께서 입장하고 퇴장하는 시간을 기준으로 저 돌쇠가 마님의 공부한 시간을 저장하고 있습니다요!!\n**음성채널을 설정해야 지가 마님의 공부시간 저장할 수 있으니 꼭 해주십죠!!**\n
+- ${KEYWORDS.STUDYTIME} : 마님의 공부시간 통계를 볼 수 있어유!\n하루 / 일주일 / 한 달 간의 총 공부시간을 확인할 수 있습죠!!
+
+
+---
+
+이상이여유 마님! 
+추가적인 기능 개발을 원하시면 [개발자 김희주 마님](https://github.com/lucykim05)이나 [개발자 이여빈 마님](https://github.com/stellalee1210)께 말씀해보셔유!
+
+
+해당 도움말은 ${KEYWORDS.HELP} 명령어로 다시 확인 하실 수 있습니다요!
+
+돌쇠는 이만 물러갑니다요. 
+오늘도 공부 즐겁게 하시어유!! 
+`;
