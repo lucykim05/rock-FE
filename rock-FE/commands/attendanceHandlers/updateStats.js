@@ -8,7 +8,11 @@ import {
 
 // 메인 함수
 export async function updateAttendanceStats(userId, guildId, yesterday) {
-  const attendedYesterday = await checkYesterdayAttendance(userId, yesterday);
+  const attendedYesterday = await checkYesterdayAttendance(
+    userId,
+    guildId,
+    yesterday
+  );
   const currentStats = await getCurrentStats(userId, guildId);
   const newStats = calculateNewStats(currentStats, attendedYesterday);
   await saveStats(userId, guildId, newStats);

@@ -11,74 +11,91 @@ import pool from '../../db/database.js';
 import { SCHEDULE_QUERIES } from '../../db/queries/schedule.js';
 
 export const scheduleManager = {
-  // 길드별 스케쥴 저장(map으로)
   scheduledJobs: new Map(),
 
-  // 단일 서버 출석 스케줄 설정
   async setupAttendance(guildId) {
     try {
-      // 기존 스케쥴 데이터 있으면 취소(어차피 재설정)
+      // 기존 스케쥴 취소
       if (this.scheduledJobs.has(guildId)) {
         this.scheduledJobs.get(guildId).cancel();
-        console.log(`기존 스케줄 취소됨`);
+        console.log(`[${guildId}] 기존 스케줄 취소됨`);
       }
 
-      // time은 node-schedule 형식대로 넣어둠
       const timeSetting = await pool.query(SCHEDULE_QUERIES.GET_TIME, [
         guildId,
       ]);
+
       if (timeSetting.rows.length === 0) {
-        console.log('설정이 없습니다.');
+        console.log(`[${guildId}] 설정이 없습니다.`);
         return;
       }
 
-      // 설정 가져와서 스케쥴링
       const { attendance_channel_id, attendance_time } = timeSetting.rows[0];
+
+      // 디버깅 로그 추가
+      console.log(`[${guildId}] 스케줄 설정 시도:`);
+      console.log(`  - 채널 ID: ${attendance_channel_id}`);
+      console.log(`  - 시간 설정: ${attendance_time}`);
+      console.log(
+        `  - 현재 서버 시간: ${new Date().toLocaleString('ko-KR', {
+          timeZone: 'Asia/Seoul',
+        })}`
+      );
+
       const job = scheduleJob(attendance_time, async () => {
+        console.log(
+          `[${guildId}] 출석 알림 실행 - ${new Date().toLocaleString('ko-KR')}`
+        );
+
         const channel = client.channels.cache.get(attendance_channel_id);
 
         if (!channel) {
-          console.error(ATTENDANCE.NO_CHANNEL);
+          console.error(`[${guildId}] ${ATTENDANCE.NO_CHANNEL}`);
           return;
         }
 
-        // 기존 내용과 동일
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setCustomId('출석')
             .setLabel('출석')
             .setStyle(ButtonStyle.Primary)
         );
+
         const embed = new EmbedBuilder()
           .setTitle('출석 체크')
           .setDescription(ATTENDANCE.BUTTON_MESSAGE);
 
         await channel.send({ embeds: [embed], components: [row] });
-        console.log('출석 버튼 전송 완료');
+        console.log(`[${guildId}] 출석 버튼 전송 완료`);
       });
 
-      // 서버 스케쥴 정보 저장
-      this.scheduledJobs.set(guildId, job);
+      if (job) {
+        this.scheduledJobs.set(guildId, job);
+        console.log(`[${guildId}] 스케줄 등록 완료`);
+        console.log(`[${guildId}] 다음 실행 예정: ${job.nextInvocation()}`);
+      } else {
+        console.error(`[${guildId}] 스케줄 등록 실패 - job이 null입니다`);
+      }
     } catch (error) {
-      console.error('스케쥴 설정 오류', error);
+      console.error(`[${guildId}] 스케쥴 설정 오류:`, error);
     }
   },
 
-  // 모든 서버 스케줄 초기화
   async initializeAllSchedules() {
     try {
       const result = await pool.query(SCHEDULE_QUERIES.GET_ID);
+      console.log(`총 ${result.rows.length}개 서버의 스케줄 초기화 시작`);
 
-      // 모든 서버 setup
       for (const row of result.rows) {
         await this.setupAttendance(row.guild_id);
       }
+
+      console.log('모든 스케줄 초기화 완료');
     } catch (error) {
-      console.error('스케쥴 초기화 오류', error);
+      console.error('스케쥴 초기화 오류:', error);
     }
   },
 
-  // index.js ClientReady용
   async loadSchedules(guildId) {
     if (guildId) {
       await this.setupAttendance(guildId);

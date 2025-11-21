@@ -49,6 +49,12 @@
   text-decoration: none !important;
   padding: 0 !important;
   color: #999 !important;
+  border: 1px solid #e0e0e0 !important; /* 테두리 추가 */
+  border-right: none !important; /* 오른쪽 테두리 제거 (중복 방지) */
+}
+
+.react-calendar__month-view__weekdays__weekday:last-child {
+  border-right: 1px solid #e0e0e0 !important; /* 마지막 요일은 오른쪽 테두리 유지 */
 }
 
 .react-calendar__month-view__weekdays__weekday abbr {
@@ -64,8 +70,21 @@
   font-size: 0.9em !important;
   color: #666 !important;
   font-weight: 400 !important;
-  border: none !important;
-  background: none !important;
+  border: 1px solid #e0e0e0 !important; /* 테두리 추가 */
+  border-top: none !important; /* 위쪽 테두리 제거 (중복 방지) */
+  border-right: none !important; /* 오른쪽 테두리 제거 (중복 방지) */
+  background: white !important; /* 배경색 추가 */
+  border-radius: 0 !important;
+}
+
+/* 각 행의 첫 번째 셀 */
+.react-calendar__month-view__days__day:nth-child(7n + 1) {
+  border-left: 1px solid #e0e0e0 !important;
+}
+
+/* 각 행의 마지막 셀 */
+.react-calendar__month-view__days__day:nth-child(7n) {
+  border-right: 1px solid #e0e0e0 !important;
 }
 
 /* 날짜 숫자 스타일 */
@@ -85,6 +104,7 @@
 /* 다른 달 날짜 스타일 */
 .react-calendar__month-view__days__day--neighboringMonth {
   color: #ddd !important;
+  background: #f9f9f9 !important; /* 다른 달은 배경색 살짝 다르게 */
 }
 
 /* 오늘 날짜 스타일 */
@@ -116,6 +136,12 @@
   padding: 8px !important;
 }
 
+/* 월 뷰 날짜 그리드 */
+.react-calendar__month-view__days {
+  border-top: 1px solid #e0e0e0 !important; /* 전체 그리드 위쪽 테두리 */
+  border-left: 1px solid #e0e0e0 !important; /* 전체 그리드 왼쪽 테두리 */
+}
+
 /* 네비게이션 영역 스타일 */
 .react-calendar__navigation {
   margin-bottom: 16px !important;
@@ -139,10 +165,20 @@
 /* hover 효과 제거 */
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
-  background: none !important;
+  background: white !important; /* hover 시에도 배경색 유지 */
 }
 
 /* 날짜 그리드 스타일 */
 .react-calendar__month-view__days {
   gap: 0 !important;
+}
+
+/* 모든 active 상태 테두리 제거 */
+.react-calendar__tile--active,
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus,
+.react-calendar__tile:focus,
+.react-calendar__tile:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
