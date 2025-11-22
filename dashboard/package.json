@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port 8000 --host",
+    "build": "vite build",
+    "start": "node -e \"process.env.PORT = process.env.PORT || 8000; require('child_process').execSync('vite preview --host --port ' + process.env.PORT, {stdio: 'inherit'})\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.83.0",

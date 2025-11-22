@@ -6,7 +6,7 @@ export default function Dropdown({ options, value, onChange }) {
       value={value?.id || ''}
       onChange={(e) => {
         const selected = options.find((opt) => opt.id === e.target.value);
-        onChange(selected || null);
+        onChange(selected || null); 
       }}
       className="border rounded-md px-2 py-1 text-sm"
     >

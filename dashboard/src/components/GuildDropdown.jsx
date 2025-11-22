@@ -1,20 +1,12 @@
 //내부 내용 넣기
 
-import { useState } from 'react';
 import Dropdown from './Dropdown';
 
-export default function GuildDropdown() {
-  const [selectedGuild, setSelectedGuild] = useState(null);
-
-  const guilds = [
-    { id: '1', name: 'Server A' },
-    { id: '2', name: 'Server B' },
-  ];
-
+export default function GuildDropdown({serverList, selectedGuild, setSelectedGuild}) {
   return (
     <div>
       <Dropdown
-        options={guilds}
+        options={serverList || []}
         value={selectedGuild}
         onChange={setSelectedGuild}
       />
