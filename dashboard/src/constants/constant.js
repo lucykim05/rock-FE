@@ -1,0 +1,1 @@
+export const DISCORD_LOGIN_URL = `https://discord.com/oauth2/authorize?client_id=1435546320927592480&response_type=code&redirect_uri=https%3A%2F%2Ffollowing-brena-rock-fe-6070e56e.koyeb.app%2F&scope=identify+guilds`;
