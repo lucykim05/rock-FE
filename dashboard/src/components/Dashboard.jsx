@@ -1,28 +1,15 @@
-  import { PersonalStatsCard } from './PersonalStatsCard.jsx';
-  import { RankingCard } from './RankingCard.jsx';
   import GuildDropdown from './GuildDropdown.jsx';
-  import AttendanceCalendar from './AttendanceCalendar.jsx';
+  import DashboardContent from './DashboardContent.jsx'
   import { useEffect, useRef, useState } from 'react';
   import { getGuildInfo  } from '../api/guilds.js';
 
   export default function Dashboard (){
     const [serverList, setServerList] = useState([]);
     const [selectedGuild, setSelectedGuild] = useState(null);
-
-      const guildId = '1435586389243854860';
-      const userId = '391098361924812800';
-      const userName = '유저이름';
-
-      // mock 데이터
-      const personalStats = { attendanceCount: 3, streakDays: 2, studyTotal: 45 };
-      const rankingData = [
-          { username: '여빈', hours: 45 },
-          { username: '희주', hours: 38 },
-          { username: '돌쇠', hours: 32 },
-          { username: '이슬', hours: 30 },
-      ];
-
-      //한 번만 실행되게 useRef 사용
+    
+    const userName = '유저이름';
+    
+    //한 번만 실행되게 useRef 사용
       const hasFetchedGuild = useRef(false);
       useEffect(()=>{
         const guildInfo = async() =>{
@@ -47,12 +34,8 @@
             <GuildDropdown serverList = {serverList} selectedGuild = {selectedGuild} setSelectedGuild ={setSelectedGuild}/>
           </div>
 
-          <AttendanceCalendar guildId={guildId} userId={userId} />
-
-          <div className="flex justify-center gap-12 flex-wrap text-black mt-6">
-            <PersonalStatsCard {...personalStats} />
-            <RankingCard ranking={rankingData} />
-          </div>
+          {/* dashboard 내용 */}
+          {selectedGuild && <DashboardContent/>}
         </main>
       )
   }
