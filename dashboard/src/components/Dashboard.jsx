@@ -18,7 +18,10 @@ import { getUserInfo } from '../api/user.js';
           //사용자의 서버 중 돌쇠가 포함된 서버의 목록만을 가져옴
           const userGuildsData = await getGuildInfo(hasFetchedGuild); //data || undefined
           //값이 있다면 통째로 저장
-          if(userGuildsData) setServerList(userGuildsData);
+          if(userGuildsData && userGuildsData.length > 0){ 
+            setServerList(userGuildsData);
+            setSelectedGuild(userGuildsData[0])
+          }
         }
 
         const userInfo = async() =>{
