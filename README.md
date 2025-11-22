@@ -122,7 +122,6 @@
         </td>
         <td align = 'center' width = '200'>
             <a href = 'https://ancient-shrine-3f1.notion.site/Main-Page-2ae151b029cd80439f2fc27619e4f1f3?pvs=74' target = 'blank'>
-
                 <img src = "https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width = '80' height = '80' alt = 'notion'/>
             </a>
         </td>
