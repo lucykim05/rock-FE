@@ -8,9 +8,12 @@ export const code2AccessToken = async (url, hasRequestedAccessToken) => {
   if (code && !hasRequestedAccessToken.current) {
     try {
       hasRequestedAccessToken.current = true;
-      const data = await supabase.functions.invoke("discord-oauth", {
+      //supabase의 discord-oauth 폴더의 index.ts 실행
+      const { data, error } = await supabase.functions.invoke("discord-oauth", {
         body: { code },
       });
+
+      if (error) throw Error(error);
 
       console.log("로그인 성공!");
       localStorage.setItem("discord_access_token", data.access_token);
@@ -26,4 +29,7 @@ export const code2AccessToken = async (url, hasRequestedAccessToken) => {
       return false;
     }
   }
+
+  //상단 if문에 걸리지 않는 경우
+  return false;
 };
