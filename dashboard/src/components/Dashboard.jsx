@@ -2,15 +2,17 @@
   import DashboardContent from './DashboardContent.jsx'
   import { useEffect, useRef, useState } from 'react';
   import { getGuildInfo  } from '../api/guilds.js';
+import { getUserInfo } from '../api/user.js';
 
   export default function Dashboard (){
     const [serverList, setServerList] = useState([]);
     const [selectedGuild, setSelectedGuild] = useState(null);
-    
-    const userName = '유저이름';
+    const [userDisplayName, setUserDisplayName] = useState('');
+    const [userId, setUserId] = useState(null);
     
     //한 번만 실행되게 useRef 사용
       const hasFetchedGuild = useRef(false);
+      const hasFetchedUser = useRef(false);
       useEffect(()=>{
         const guildInfo = async() =>{
           //사용자의 서버 중 돌쇠가 포함된 서버의 목록만을 가져옴
@@ -18,7 +20,17 @@
           //값이 있다면 통째로 저장
           if(userGuildsData) setServerList(userGuildsData);
         }
-        guildInfo();      
+
+        const userInfo = async() =>{
+          const userData = await getUserInfo(hasFetchedUser);
+          if(userData){
+            setUserDisplayName(userData.global_name);
+            setUserId(userData.id);
+          }
+        }
+
+        guildInfo();
+        userInfo();
       }, [])
 
       return (
@@ -27,7 +39,7 @@
           <div className="flex justify-between items-center mb-4">
             {/* 왼쪽: 유저네임 */}
             <span className="text-black text-xl font-semibold">
-              {userName}님의 Dashboard
+              {userDisplayName}님의 Dashboard
             </span>
 
             {/* 오른쪽: Guild Dropdown */}
@@ -35,7 +47,7 @@
           </div>
 
           {/* dashboard 내용 */}
-          {selectedGuild && <DashboardContent/>}
+          { selectedGuild && <DashboardContent userDisplayName = { userDisplayName } userId = { userId } selectedGuild ={ selectedGuild } />}
         </main>
       )
   }
