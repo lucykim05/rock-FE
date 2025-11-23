@@ -31,6 +31,10 @@ export const scheduleManager = {
       }
 
       const { attendance_channel_id, attendance_time } = timeSetting.rows[0];
+      if (!attendance_time) {
+        console.error(`[${guildId}] attendance_time이 없습니다.`);
+        return;
+      }
 
       // 디버깅 로그 추가
       console.log(`[${guildId}] 스케줄 설정 시도:`);

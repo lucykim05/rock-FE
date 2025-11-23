@@ -25,6 +25,8 @@ const KEYWORDS = Object.freeze({
 
   HELLO: "`/인사`",
   HUMOR: "`/오늘의유머`",
+  DASHBOARD: "`/대시보드`",
+  BOJ: "`/백준문제추천`",
 
   ATTENDANCE_CHECK: "`/출석체크`",
   ATTENDANCE_STATE: "`/출석현황`",
@@ -44,6 +46,8 @@ export const HELP_MESSAGE = `
 ## 기본
 - ${KEYWORDS.HELLO} : 지가 인사를 해드려유!
 - ${KEYWORDS.HUMOR} : 개발자 마님을 위해 지가 고오급 유머를 던져드려유 흐흐...
+- ${KEYWORDS.BOJ} : 유우명한 온라인 알고리즘 문제 사이트 '백준'에서 지가 문제를 아무거나 뽑아드려유!\n난이도 / 태그 / 언어를 선택적으로 설정하실 수 있으셔유! 
+- ${KEYWORDS.DASHBOARD} : 지가 있는 서버에서 마님의 공부시간과 출석 정보를 한 번에 모아서 볼 수 있는 웹사이트를 안내 해드려유!\n물론 마님께서는 부지런하셔서 안 보셔두 꽉 차있겠지만유.. 
 
 ## 출석
 ### 출석 설정 명령어
