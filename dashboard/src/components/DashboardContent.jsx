@@ -6,7 +6,6 @@ import { attendanceRanking } from '../database/attendanceRanking.js';
 import { getWeeklyStudyRanking } from '../database/studyTime.js';
 
 export default function DashboardContent({
-  userDisplayName,
   userId,
   selectedGuild,
 }) {
