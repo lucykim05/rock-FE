@@ -1,7 +1,6 @@
-import React from 'react';
 import { Button } from './Button';
 
-const Header = ({ isLoggedIn, onLogin, onLogout }) => {
+const Header = ({ isLoggedIn,  onLogout }) => {
   return (
     <header className="fixed top-0 left-0 right-0 w-screen bg-white shadow-md z-50 px-10 py-5 flex flex-row justify-between items-center">
       {/* 로고 */}
@@ -16,11 +15,9 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
         >
           Contact
         </Button>
-        {isLoggedIn ? (
+        {isLoggedIn && (
           <Button onClick={onLogout}>로그아웃</Button>
-        ) : (
-          <Button onClick={onLogin}>로그인</Button>
-        )}
+        ) }
       </div>
     </header>
   );
