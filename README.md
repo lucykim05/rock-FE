@@ -242,10 +242,12 @@
     <summary><h3>대시보드</h3></summary>
 
 
-### 대시보드 링크
+**대시보드 링크**
 [대시보드 바로가기](https://following-brena-rock-fe-6070e56e.koyeb.app/)  <!-- 배포 링크 -->
 
-### 스크린샷
+<br />
+
+**서비스 화면**
 
 <img src="https://raw.githubusercontent.com/lucykim05/image/main/rock_FE/dashboard.png" />
 <img src="https://raw.githubusercontent.com/lucykim05/image/main/rock_FE/logout.png" />
