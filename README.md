@@ -53,7 +53,7 @@
 
 1. 원하는 디스코드 서버에 돌쇠 초대
    - 초대 방법 1 : 해당 프로젝트의 [노션 페이지](https://ancient-shrine-3f1.notion.site/r0ck-FE-2ae151b029cd80439f2fc27619e4f1f3) 상단에 `Bot Profile URL` 클릭
-   - 초대 방법 2 : [대시보드 사이트](https://balanced-lyndsay-rock-fe-fe9232e1.koyeb.app/)의 `서버에 돌쇠 초대하기` 클릭
+   - 초대 방법 2 : [대시보드 사이트](https://rock-fe.vercel.app/)의 `서버에 돌쇠 초대하기` 클릭
 2.  디스코드에서 `/도움말` 명령어 실행
 3. `/세팅 공부채널설정` 명령어로 공부시간을 측정할 음성채널 설정
 4. `/세팅 출석채널설정` 명령어로 출석을 감지할 수 있는 채널 설정
